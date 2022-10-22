@@ -28,7 +28,7 @@ class Brand(models.Model):
 
 
 class Product(models.Model):
-    name = models.CharField(max_length=150, verbose_name='نام کالا')
+    name = models.CharField(max_length=150, unique=True, verbose_name='نام کالا')
     slug = models.SlugField(max_length=200, blank=True)
     description = models.TextField(blank=True, null=True,verbose_name='توضیحات')
     price = models.DecimalField(max_digits=11, decimal_places=2, verbose_name='قیمت')
