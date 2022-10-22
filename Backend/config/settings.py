@@ -40,6 +40,8 @@ INSTALLED_APPS = [
 
     # My Apps :
     'Accounts.apps.AccountsConfig',
+    'product.apps.ProductConfig',
+
     # packages :
     'rest_framework',
     'rest_framework.authtoken',
