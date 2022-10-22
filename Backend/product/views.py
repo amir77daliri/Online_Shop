@@ -32,9 +32,9 @@ class ProductPagination(PageNumberPagination):
 class ProductListApi(generics.ListAPIView):
     serializer_class = ProductListSerializer
     pagination_class = ProductPagination
-
+    filterset_fields = ['category', 'available', 'brand_name__name']
     def get_queryset(self):
-        return Product.objects.all()
+        return Product.objects.all().order_by('-created_at')
 
 
 class ProductDetailApi(generics.RetrieveAPIView):
