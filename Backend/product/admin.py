@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Product, Color
+from .models import Product, Color, Brand
 
 
 @admin.register(Product)
@@ -13,3 +13,8 @@ class ProductAdmin(admin.ModelAdmin):
 @admin.register(Color)
 class ColorAdmin(admin.ModelAdmin):
     pass
+
+
+@admin.register(Brand)
+class BrandAdmin(admin.ModelAdmin):
+    list_display = ['name']
