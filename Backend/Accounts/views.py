@@ -49,7 +49,7 @@ class RegisterVerifyApi(generics.GenericAPIView):
         except User.DoesNotExist:
             return Response(self.content[0], status=status.HTTP_400_BAD_REQUEST)
         code = get_code_from_redis(serializer.validated_data['phone_number'])
-        print(code)
+        # print(code)
         if not code or code.decode('utf-8') != serializer.validated_data['code']:
             return Response(self.content[1], status=status.HTTP_400_BAD_REQUEST)
         user.is_active = True
