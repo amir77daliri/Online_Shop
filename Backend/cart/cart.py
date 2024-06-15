@@ -11,12 +11,13 @@ class Cart:
 
         self.cart = cart
 
-    def add_to_cart(self, product, quantity):
+    def add_to_cart(self, product, quantity, color):
         product_id = str(product.id)
         if product_id not in self.cart:
             self.cart[product_id] = {
                 'quantity': 0,
-                'price': str(product.price)
+                'price': str(product.price),
+                'color': str(color)
             }
         self.cart[product_id]['quantity'] += quantity
         if self.cart[product_id]['quantity'] < 10:
@@ -30,10 +31,12 @@ class Cart:
         if product_id in self.cart.keys():
             del self.cart[product_id]
             self.save()
+            return True
+        return False
 
     def __iter__(self):
         products_ids = self.cart.keys()
-        products = Product.objects.filter(id__in=products_ids)
+        products = Product.objects.filter(id__in=products_ids).select_related('brand_name', 'category').prefetch_related('color')
         cart = self.cart.copy()
         for product in products:
             cart[str(product.id)]['product'] = product

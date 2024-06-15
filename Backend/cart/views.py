@@ -1,7 +1,9 @@
+from drf_yasg import openapi
+from drf_yasg.utils import swagger_auto_schema
 from rest_framework import generics, status, serializers
 from rest_framework.response import Response
 from .cart import Cart
-from .serializers import AddtoCartSerializer, DeleteFromCartSerializer
+from .serializers import AddtoCartSerializer, DeleteFromCartSerializer, AddtoCartResponseSerializer
 from product.models import Product, Color
 from product.serializers import ProductDetailSerializer
 
@@ -23,12 +25,20 @@ class CartDetailApi(generics.GenericAPIView):
 class AddToCartApi(generics.GenericAPIView):
     serializer_class = AddtoCartSerializer
 
+    @swagger_auto_schema(
+        operation_description="Add a product to the cart",
+        request_body=AddtoCartSerializer,
+        responses={
+            200: openapi.Response('Message', AddtoCartResponseSerializer),
+            400: "Bad Request"
+        }
+    )
     def post(self, request):
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
         data = serializer.validated_data
         try:
-            product = Product.objects.get(id=data['product_id'])
+            product = Product.objects.prefetch_related('color').get(id=data['product_id'])
         except Product.DoesNotExist:
             raise serializers.ValidationError("محصول مورد نظر موجود نیست")
         if not product.available:
@@ -42,7 +52,7 @@ class AddToCartApi(generics.GenericAPIView):
             return Response({'msg': 'محصول با رنگ مورد نظر موجود نیست.'}, status=status.HTTP_400_BAD_REQUEST)
 
         cart = Cart(request)
-        cart.add_to_cart(product, data['quantity'])
+        cart.add_to_cart(product, data['quantity'], data['color'])
         return Response({'msg': 'محصول به سبد خرید اضافه شد.'}, status=status.HTTP_200_OK)
 
 
@@ -54,5 +64,6 @@ class DeleteFromCart(generics.GenericAPIView):
         my_ser = self.serializer_class(data=request.data)
         my_ser.is_valid(raise_exception=True)
         product_id = my_ser.validated_data.get('product_id')
-        cart.remove_from_cart(product_id)
-        return Response({'msg': 'محصول از سبد خرید حذف شد.'}, status=status.HTTP_200_OK)
+        if cart.remove_from_cart(product_id):
+            return Response({'msg': 'محصول از سبد خرید حذف شد.'}, status=status.HTTP_200_OK)
+        return Response({'msg': 'محصول مورد نظر در سبد خرید موجود نیست'}, status=status.HTTP_400_BAD_REQUEST)

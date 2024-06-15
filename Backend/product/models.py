@@ -18,7 +18,6 @@ class Brand(models.Model):
     name = models.CharField(max_length=50, verbose_name='نام برند')
     category = models.ManyToManyField(Category, related_name='brands')
 
-
     class Meta:
         verbose_name = 'برند'
         verbose_name_plural = 'برند ها'
@@ -29,7 +28,7 @@ class Brand(models.Model):
 
 class Product(models.Model):
     name = models.CharField(max_length=150, unique=True, verbose_name='نام کالا')
-    slug = models.SlugField(max_length=200, blank=True)
+    slug = models.SlugField(max_length=200)
     description = models.TextField(blank=True, null=True,verbose_name='توضیحات')
     price = models.DecimalField(max_digits=11, decimal_places=2, verbose_name='قیمت')
     color = models.ManyToManyField(Color)
@@ -46,7 +45,3 @@ class Product(models.Model):
 
     def __str__(self):
         return self.name
-
-    def save(self, *args, **kwargs):
-        self.slug = slugify(f'{self.name}')
-        super(Product, self).save(*args, **kwargs)

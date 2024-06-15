@@ -2,16 +2,15 @@ from rest_framework import serializers
 from .models import Category
 
 
-class CategoryListSerializer(serializers.ModelSerializer):
-    def get_sub(self, obj):
-        if obj.is_sub:
-            return "%s" % obj.sub_category
+class SubCategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Category
+        fields = ['id', 'title']
 
-    sub_category = serializers.SerializerMethodField('get_sub')
+
+class CategorySerializer(serializers.ModelSerializer):
+    children = SubCategorySerializer(many=True, read_only=True)
 
     class Meta:
         model = Category
-        fields = "__all__"
-
-
-
+        fields = ['id', 'title', 'children']

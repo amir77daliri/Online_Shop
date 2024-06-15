@@ -9,3 +9,7 @@ class AddtoCartSerializer(serializers.Serializer):
 
 class DeleteFromCartSerializer(serializers.Serializer):
     product_id = serializers.IntegerField()
+
+
+class AddtoCartResponseSerializer(serializers.Serializer):
+    msg = serializers.CharField(max_length=200)

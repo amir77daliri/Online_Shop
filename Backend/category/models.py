@@ -4,7 +4,7 @@ from django.db import models
 class Category(models.Model):
     title = models.CharField(max_length=50, verbose_name='عنوان')
     slug = models.SlugField(max_length=100)
-    sub_category = models.ForeignKey('self', default=None, related_name='sub_categories', on_delete=models.CASCADE, null=True, blank=True)
+    parent_category = models.ForeignKey('self', default=None, related_name='children', on_delete=models.CASCADE, null=True, blank=True)
     is_sub = models.BooleanField(default=False)
 
     class Meta:
