@@ -1,14 +1,16 @@
 from rest_framework.response import Response
-from rest_framework import status
-from rest_framework import generics
+from rest_framework import generics, status, permissions
 from rest_framework.authtoken.views import ObtainAuthToken
 from .serializers import (
     UserRegisterSerializer,
     UserRegisterVerifySerializer,
+    AddressSerializer
 )
 from django.contrib.auth import get_user_model
 from .tasks import send_otp_code_task
 from .utils import get_code_from_redis, delete_code_from_redis
+from .models import Address
+
 
 User = get_user_model()
 
@@ -56,3 +58,21 @@ class RegisterVerifyApi(generics.GenericAPIView):
         user.save()
         delete_code_from_redis(serializer.validated_data['phone_number'])
         return Response(self.content[2], status=status.HTTP_200_OK)
+
+
+class AddressCreateApi(generics.CreateAPIView):
+    serializer_class = AddressSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context['user'] = self.request.user
+        return context
+
+
+class AddressListApi(generics.ListAPIView):
+    serializer_class = AddressSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return Address.objects.filter(user=self.request.user)

@@ -1,5 +1,7 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
+from .models import Address
+
 
 User = get_user_model()
 
@@ -35,3 +37,24 @@ class UserRegisterSerializer(serializers.Serializer):
 class UserRegisterVerifySerializer(serializers.Serializer):
     phone_number = serializers.CharField(max_length=11, required=True)
     code = serializers.CharField(required=True)
+
+
+class AddressSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Address
+        exclude = ('user', )
+
+    def create(self, validated_data):
+        validated_data['user'] = self.context['user']
+        print(validated_data)
+        address = Address.objects.create(city=validated_data['city'], state=validated_data['state'], user=validated_data['user'])
+        return address
+
+    def update(self, instance, validated_data):
+        validated_data['user'] = self.context['user']
+        instance.city = validated_data['city']
+        instance.state = validated_data.state
+        instance.save()
+        return instance
+

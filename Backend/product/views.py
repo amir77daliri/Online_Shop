@@ -42,7 +42,7 @@ class ProductListApi(generics.ListAPIView):
     filterset_fields = ['available', 'brand_name__name']
 
     def get_queryset(self):
-        return Product.objects.all().order_by('-created_at')
+        return Product.objects.order_by('-created_at')
 
 
 class ProductDetailApi(generics.RetrieveAPIView):

@@ -26,3 +26,15 @@ class User(AbstractBaseUser, PermissionsMixin):
         if self.first_name and self.last_name:
             return f'{self.first_name} {self.last_name}'
         return self.get_username()
+
+    def __str__(self):
+        return self.get_fullname()
+
+
+class Address(models.Model):
+    user = models.ForeignKey(User, related_name='addresses', on_delete=models.CASCADE)
+    city = models.CharField(max_length=50)
+    state = models.CharField(max_length=255)
+
+    def __str__(self):
+        return f"{self.city} - {self.state}"

@@ -24,6 +24,7 @@ urlpatterns = [
     path('api/products/', include('product.urls')),
     path('api/category/', include('category.urls')),
     path('api/cart/', include('cart.urls')),
+    path('api/orders/', include('order.urls')),
 ]
 
 # swagger urls :
