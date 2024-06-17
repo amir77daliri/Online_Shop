@@ -1,10 +1,9 @@
 from django.db import models
-from django.utils.text import slugify
 from category.models import Category
 
 
 class Color(models.Model):
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, unique=True)
 
     class Meta:
         verbose_name = 'رنگ'

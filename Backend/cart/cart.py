@@ -11,6 +11,9 @@ class Cart:
 
         self.cart = cart
 
+    def get_cart(self):
+        return self.cart
+
     def add_to_cart(self, product, quantity, color):
         product_id = str(product.id)
         if product_id not in self.cart:
@@ -46,3 +49,8 @@ class Cart:
 
     def save(self):
         self.session.modified = True
+
+    def clear(self):
+        del self.session[CART_SESSION_ID]
+        self.session.modified = True
+
